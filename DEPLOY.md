@@ -1,45 +1,54 @@
-# GitHub Pages V5 覆盖部署与验证清单
+# NetConfiger GitHub Pages V6 发布与验收
 
-> 部署范围：`netconfiger/netconfiger` 仓库。绝对不要将本包上传到 `netconfiger.com` 生产服务器。
+**范围：仅 `https://github.com/netconfiger/netconfiger` 静态仓库。** 不修改 `netconfiger.com` 生产网站、Windows 程序、数据库及业务后台。
 
-## 0. 先保留当前仓库版本
+## 部署前确认
 
-访问 https://github.com/netconfiger/netconfiger ，记录目前 main 的 commit SHA，确保可通过 GitHub Revert 恢复。不要 force push。
+1. 记录仓库 `main` 当前最新 commit SHA。保留现有版本以便 `git revert`。
+2. 检查 GitHub Settings → Pages 的实际发布源（通常 `main / (root)`；请以仓库配置为准）。
+3. GitHub 当前可能出现网页缓存与 raw 分支文件不同步，**不得仅凭仓库普通文件页缓存判断发布失败**。以目标分支最新 commit + 实际公网 HTML 的 `nc-build` 一同核验。
 
-## 1. 覆盖文件与清理
+## 覆盖文件
 
-将 ZIP 根目录中的以下文件合并/覆盖到 **仓库 main 根目录**（不是上一级，也不是创建同名子文件夹）：
+将压缩包**根目录**以下文件上传/覆盖到 `netconfiger/netconfiger` 仓库 `main` 分支根目录：
 
-- `index.html`, `en.html`, `zh.html`, `.nojekyll`, `README.md`, `DEPLOY.md`
-- `assets/site.css`, `assets/site.js`
+- `index.html` — 中文默认主页。
+- `en.html` — 独立英文页面。
+- `zh.html` — 兼容旧地址，自动跳转中文首页。
+- `assets/site.css`、`assets/site.js` — 页面共用资源。
+- `README.md` — 面向访客的产品介绍，**不是部署日志**。
+- `DEPLOY.md` — 本文件。
+- `.nojekyll` — GitHub Pages 静态发布标记。
+- `tools/verify_site.py` — 静态自检脚本，不参与网页运行。
 
-检查仓库原 `styles.css` 是否仍被任何 HTML 使用。如果无人引用，建议删掉；不能只上传文件而保留另一套仍可访问的过期入口。原仓库已存在 `assets/`，合并而非盲目删除其中未知文件。
+**仅有条件地清理：** 旧 `styles.css` 是 V3 遗留的深色样式，V6 未引用。核对仓库没有其他页面引用后可删除，避免误导维护者。不要不检查就删除其他 `assets/` 文件。
 
-## 2. Pages 发布源
+## 本地自动验收
 
-GitHub → Repository Settings → Pages → Build and deployment，核实 `Deploy from a branch` 对应 `main / (root)`，或核实当前 Actions 的构建目录。此前公开网页与仓库源代码存在旧/新不一致，必须实际查出发布路径或缓存原因。
+在解压后的仓库根目录执行：
 
-## 3. 验证最新公网内容
+```powershell
+python tools/verify_site.py
+```
 
-以下 URL 全部打开核实：
+脚本验证页面语言、必要文件、跨语言跳转、共享 CSS/JS、旧 `zh.html` 重定向、相对静态资源和 HTML 基础结构。**不会检查外网图片是否加载或宣称浏览器截图已通过。**
 
-- https://netconfiger.github.io/netconfiger/
-- https://netconfiger.github.io/netconfiger/index.html
-- https://netconfiger.github.io/netconfiger/en.html
-- https://netconfiger.github.io/netconfiger/zh.html
-- https://netconfiger.github.io/netconfiger/assets/site.css
-- https://netconfiger.github.io/netconfiger/assets/site.js
+## 发布后公网验收
 
-查看 `index.html` 源码含 `<meta name="nc-build" content="gh-pages-v5-20261022">`，网页正文第一屏有 `Windows 网络分发` 且是中文，不得继续返回 “More control over your network path.” 旧英文页面。无痕窗口再检查一次。`zh.html` 应跳转 `index.html`。
+1. [中文默认页](https://netconfiger.github.io/netconfiger/) 和 [中文 index.html](https://netconfiger.github.io/netconfiger/index.html)：应是同一个中文 V6 页面。
+2. [英文页](https://netconfiger.github.io/netconfiger/en.html)：页面与标题均为英文，点击“中文”回到中文页。
+3. [旧中文入口](https://netconfiger.github.io/netconfiger/zh.html)：跳转至 `index.html`。
+4. [CSS](https://netconfiger.github.io/netconfiger/assets/site.css)、[JS](https://netconfiger.github.io/netconfiger/assets/site.js)：响应 200，页面能加载，且 `nc-build` 为 `gh-pages-v6-20261022`。
+5. 检查 HTTPS 加载的 `https://netconfiger.com/icon.png` 和 `https://netconfiger.com/app-screenshot.png`：如某一图片加载失败，应从**官网真实源文件**下载、保存至 `assets/`，再替换引用；不要重新绘制 Logo 或伪造软件截图。
+6. 使用真实浏览器在桌面 1366 宽度，以及手机 360 / 375 / 390 / 430 宽度检查：无横向溢出，菜单可打开/关闭，英文/中文切换正确，按钮和场景文章均指向对应语言的官方网站。
+7. 将提交 SHA、Pages 工作流运行记录、线上响应与桌面/手机截图保存为独立验收证据。**没有真实的截图或访问结果，不能标记线上验收完成。**
 
-移动端 360 / 375 / 390 / 430 宽度：菜单可展开、关闭，页面无横向滚动；英文和中文切换可用。检查真实 Logo、截图是否加载；本站依赖官网的 2 张图片 URL，若加载失败，应先将**原图**保存到仓库再切本地引用，而不是重绘标识。
+## 已知依赖与限制
 
-## 4. 交付范围与未完成
+- 品牌 Logo 与真实软件截图仍然来自官网 URL。包内没有伪造的替代素材；**尚未完成图片本地化**。如要完全不依赖远程网站，需要从有权限访问官网的设备取得原始二进制图片。
+- 这是静态介绍页；下载、价格、许可证和联系统一跳转实时官网，避免内容因版本变化而过期。
+- 此包仅是已制作的覆盖更新文件，**不是**已直接推送的 GitHub commit，也不是线上部署完成证明。
 
-本 ZIP 可直接作为覆盖包，已做静态结构检查和本地浏览器截图检查（详见随包截图、若提供）。没有操作用户 GitHub 账户，**没有 commit SHA、没有 GitHub Pages 实际发布完成记录，也不能标记线上 CLOSED**。
+## 回滚
 
-旧文件迁移仍需在真实仓库执行；图像本地化仍需在可访问官网时完成。
-
-## 5. 回滚
-
-记录本次更新前的 SHA；如果实际发布出现错误，使用 GitHub Revert 撤销本次 commit 并等候 Pages 下一轮部署，然后确认原页面内容。不要删除仓库历史、修改 CNAME/DNS 或强推。
+使用部署前记录的 SHA 对本次提交执行 GitHub `Revert`，等待 Pages 重新发布，再验证入口页面与资源版本。不要 force push、不要修改生产官网或域名 DNS。
