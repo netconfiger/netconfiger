@@ -1,12 +1,7 @@
-# NetConfiger GitHub Pages V3 修正版
+# NetConfiger GitHub Pages V5
 
-- `index.html`：默认简体中文首页。
-- `en.html`：英文页面，右上角切换。
-- `assets/site.css`：统一响应式样式。
-- 页面中三个功能图标使用本地内联 SVG，不依赖第三方图标库。
-- NetConfiger 品牌图标仍引用 `https://netconfiger.com/favicon.ico`，因为无法从当前环境下载核实官网真实图标。**此项尚未完成本地化**，请勿将其视为已完整修复。
+覆盖包：`netconfiger/netconfiger` 静态 Pages 仓库根目录。`index.html` 为简体中文默认页，`en.html` 为独立英文页，`zh.html` 将旧中文地址转到首页。共享 CSS/JS 均使用相对 `./assets/` 路径，可部署于 `/netconfiger/` 子路径。
 
-## 部署
-把 `index.html`、`en.html`、`assets/` 放在 GitHub Pages 仓库 main 分支根目录。删除旧 `zh.html` 或保留它作为历史文件（本版不再引用）。
+导航目标按官网当前中文 `/zh` 与英文 `/` 页面校准；下载入口指向官网语言对应的下载页。页面保留官网原始 Logo (`https://netconfiger.com/icon.png`) 与产品截图 (`https://netconfiger.com/app-screenshot.png`) 原址，不重绘品牌。当前执行环境无法以网络请求取得图片二进制，因此这两个真实原站资源仍为远程引用；浏览器联网可用时会由官网提供。
 
-本版是中文优先、功能图标完整的修正版，但不是官网 CSS 源码的逐像素复制。
+包内文件：index.html、en.html、zh.html、assets/site.css、assets/site.js、.nojekyll、README.md、DEPLOY.md。上传后请在 GitHub Pages 子路径检查四个入口、资源加载和移动端实际交互。
