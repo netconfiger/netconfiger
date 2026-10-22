@@ -1,20 +1,12 @@
-# NetConfiger GitHub Pages — v2
+# NetConfiger GitHub Pages V3 修正版
 
-## Deployment
+- `index.html`：默认简体中文首页。
+- `en.html`：英文页面，右上角切换。
+- `assets/site.css`：统一响应式样式。
+- 页面中三个功能图标使用本地内联 SVG，不依赖第三方图标库。
+- NetConfiger 品牌图标仍引用 `https://netconfiger.com/favicon.ico`，因为无法从当前环境下载核实官网真实图标。**此项尚未完成本地化**，请勿将其视为已完整修复。
 
-Upload `index.html`, `zh.html`, and the entire `assets` folder to the **root** of the GitHub repository `netconfiger/netconfiger`, on the `main` branch. Keep the directory structure unchanged. GitHub Pages should be configured for deployment from `main` / root.
+## 部署
+把 `index.html`、`en.html`、`assets/` 放在 GitHub Pages 仓库 main 分支根目录。删除旧 `zh.html` 或保留它作为历史文件（本版不再引用）。
 
-English: https://netconfiger.github.io/netconfiger/index.html
-Chinese: https://netconfiger.github.io/netconfiger/zh.html
-
-## Brand and product consistency
-
-- Uses the official site's favicon URL: `https://netconfiger.com/favicon.ico`. The icon is **referenced**, not copied or redesigned. Verify that this URL actually serves the official icon; if the site uses another icon URL, replace both references in each HTML file.
-- Mirrors the official site's Windows network distribution / HTTP-SOCKS5 product scope, not future transparent gateway capabilities.
-- Navigation and conversion links return to `netconfiger.com`.
-- `canonical` points to the official homepage to avoid a competing duplicate index page.
-- CSS is bundled locally; no build step, external JS, or third-party UI framework is required.
-
-## Important
-
-The official site's precise CSS tokens and icon asset could not be fetched in this build environment. This is a carefully aligned companion page based on the public site's verified content and structure, **not** an exact copy of its production CSS. Review the favicon URL and visual details after deploying.
+本版是中文优先、功能图标完整的修正版，但不是官网 CSS 源码的逐像素复制。
